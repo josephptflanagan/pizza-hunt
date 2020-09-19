@@ -4,18 +4,24 @@ const moment = require('moment');
 const PizzaSchema = new Schema(
     {
         pizzaName: {
-            type: String
+            type: String,
+            required: true,
+            trim: true
         },
         createdBy: {
-            type: String
+            type: String,
+            required: true,
+            trim: true
         },
         createdAt: {
             type: Date,
             default: Date.now,
             get: (createdAtVal) => moment(createdAtVal).format('MMM DD, YYYY [at] hh:mm a')
-          },
+        },
         size: {
             type: String,
+            required: true,
+            enum: ['Personal', 'Small', 'Medium', 'Large', 'Extra Large'],
             default: 'Large'
         },
         toppings: [],
@@ -30,15 +36,15 @@ const PizzaSchema = new Schema(
         toJSON: {
             virtuals: true,
             getters: true
-          },
+        },
         id: false
     }
 );
 
 // get total count of comments and replies on retrieval
-PizzaSchema.virtual('commentCount').get(function() {
+PizzaSchema.virtual('commentCount').get(function () {
     return this.comments.reduce((total, comment) => total + comment.replies.length + 1, 0);
-  });
+});
 
 // create the Pizza model using the PizzaSchema
 const Pizza = model('Pizza', PizzaSchema);
